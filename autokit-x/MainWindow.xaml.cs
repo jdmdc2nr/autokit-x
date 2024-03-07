@@ -1,11 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Xml.Linq;
 using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
+using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Net;
+using System.Reflection;
+using System.Windows.Navigation;
 
 namespace autokit_x
 {
@@ -13,15 +18,23 @@ namespace autokit_x
 
     public partial class MainWindow : Window
     {
+
+        private const string VersionFileUrl = "https://drive.google.com/uc?export=download&id=1HWTG5vrSEBfPL_0tU-aN4XuU3LdMz6ug";
+
         public MainWindow()
         {
+
+
             InitializeComponent();
+
+            CheckForUpdates();
 
             // Subscribe to the Exit event
             Application.Current.Exit += App_Exit;
 
 
         }
+
 
 
         private void App_Exit(object sender, ExitEventArgs e)
@@ -105,7 +118,7 @@ namespace autokit_x
             }
         }
 
-        private void UnzipMerFile(string filePath)
+        private async void UnzipMerFile(string filePath)
         {
             try
             {
@@ -197,6 +210,8 @@ namespace autokit_x
             }
         }
 
+
+
         private void ReadSecondByteAndDisplay(string folderPath)
         {
             try
@@ -235,17 +250,66 @@ namespace autokit_x
             }
         }
 
+        private async Task CheckForUpdates()
+        {
+            try
+            {
+                // Fetch the version text file
+                using (HttpClient client = new HttpClient())
+                {
+                    HttpResponseMessage response = await client.GetAsync(VersionFileUrl);
+                    response.EnsureSuccessStatusCode();
+                    string versionText = await response.Content.ReadAsStringAsync();
 
+                    // Parse the version number
+                    Version latestVersion = new Version(versionText);
 
+                    // Compare with the current version
+                    Version currentVersion = Assembly.GetEntryAssembly().GetName().Version;
 
+                    if (latestVersion > currentVersion)
+                    {
+                        // Display a message if an update is available
+                        updateAvailableTextBlock.Text = "An update is available!";
 
+                        // Show the GitHub link
+                        githubLinkTextBlock.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle errors
+                MessageBox.Show($"Error checking for updates: {ex.Message}");
+            }
+        }
 
-
-
-
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            try
+            {
+                // Verify that the URL is properly formatted
+                if (Uri.TryCreate(e.Uri.AbsoluteUri, UriKind.Absolute, out Uri uri))
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = uri.AbsoluteUri,
+                        UseShellExecute = true
+                    });
+                    e.Handled = true;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid URL format.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening URL: {ex.Message}");
+            }
+        }
     }
 }
-
 
 
 

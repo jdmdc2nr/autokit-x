@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:autokit_x"
         mc:Ignorable="d"
-        Title="autoTools - x" Height="179" Width="450" Background="#424549" Foreground="White" BorderBrush="Black" FontFamily="Calibri" FontSize="16" ResizeMode="CanMinimize">
+        Title="autoTools - x" Height="200" Width="450" Background="#424549" Foreground="White" BorderBrush="Black" FontFamily="Calibri" FontSize="16" ResizeMode="CanMinimize">
+
+
     <StackPanel x:Name="mainPanel">
         <StackPanel x:Name="dropzonePanel" Margin="0,3,0,3" Height="133">
             <TextBlock Text="Drag and drop a .ACD or .MER file into the area below:" Margin="10"/>
@@ -20,6 +22,14 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        <StackPanel x:Name="mainPanel2" Orientation="Horizontal"/>
+        <StackPanel x:Name="mainPanel2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+        <TextBlock x:Name="updateAvailableTextBlock" Text="" Width="145" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+            <TextBlock x:Name="githubLinkTextBlock"  Visibility="Collapsed" Width="52" Margin="40,0,0,0"><Hyperlink NavigateUri="https://github.com/jdmdc2nr/autokit-x/releases" RequestNavigate="Hyperlink_RequestNavigate">
+                <TextBlock Text="GitHub" Foreground="#FFDADADA" HorizontalAlignment="Right" />
+            </Hyperlink></TextBlock>
+</StackPanel>
+
+
     </StackPanel>
+
 </Window>
